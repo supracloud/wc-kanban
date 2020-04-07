@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Kanban Web Component</title>
+</head>
+
+<body>
+  <button id='add-list'>Add List</button><button id='add-item'>Add Item</button>
+  <frmdb-kanban>
+    <frmdb-kanban-list name="List 1">
+      <frmdb-kanban-list-item name="Item 1-1"></frmdb-kanban-list-item>
+      <frmdb-kanban-list-item name="Item 1-2"></frmdb-kanban-list-item>
+    </frmdb-kanban-list>
+    <frmdb-kanban-list name="List 2">
+      <frmdb-kanban-list-item name="Item 2-1"></frmdb-kanban-list-item>
+      <frmdb-kanban-list-item name="Item 2-2"></frmdb-kanban-list-item>
+      <frmdb-kanban-list-item name="Item 2-3"></frmdb-kanban-list-item>
+    </frmdb-kanban-list>
+  </frmdb-kanban>
+
+  <script src="./bundle.js"></script>
+
+  <script>
+    document.querySelector('button#add-list').addEventListener('click', () => {
+      let li = document.createElement('frmdb-kanban-list');
+      li.setAttribute('name', `List ${Math.floor(Math.random() * 5000)}`);
+      document.querySelector('frmdb-kanban').appendChild(li);
+    });
+    document.querySelector('button#add-item').addEventListener('click', () => {
+      let t = document.createElement('frmdb-kanban-list-item');
+      t.setAttribute('name', `Item ${Math.floor(Math.random() * 5000)}`);
+      document.querySelector('frmdb-kanban-list:last-child').appendChild(t);
+    });
+    document.querySelector('frmdb-kanban').addEventListener('frmdbKanbanBoardChanged', (event) => {
+      console.log('KANBAN CHANGED', event);
+      if (event.detail.type === 'moved') {
+        let card = document.querySelectorAll('frmdb-kanban-list')[event.detail.source.list]
+          .querySelectorAll('frmdb-kanban-list-item')[event.detail.source.card];
+        let targetList = document.querySelectorAll('frmdb-kanban-list')[event.detail.target.list];
+        if (event.detail.target.before) {
+          targetList.insertBefore(card, targetList.querySelectorAll('frmdb-kanban-list-item')[event.detail.target.before]);
+        } else {
+          targetList.appendChild(card);
+        }
+      }
+    });
+  </script>
+
+</body>
+
+</html>
